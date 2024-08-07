@@ -6,6 +6,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -15,6 +16,12 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     x_pose = LaunchConfiguration('x_pose', default='-5.0')
     y_pose = LaunchConfiguration('y_pose', default='4.0')
+
+    tf_publisher_node = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom']
+    )
 
     world = os.path.join(
         get_package_share_directory('rl_bringup'),
@@ -59,5 +66,6 @@ def generate_launch_description():
     ld.add_action(gzclient_cmd)
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_turtlebot_cmd)
+    ld.add_action(tf_publisher_node)
 
     return ld
