@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  rl_robot:
+    container_name: planner
+    build:
+      context: .
+      dockerfile: ws.Dockerfile
+    privileged: true
+    volumes:
+      - type: bind 
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix    
+      - type: bind
+        source: /etc/timezone
+        target: /etc/timezone     
+      - type: bind
+        source: /dev
+        target: /dev  
+    device_cgroup_rules:
+      - 'c 81:* rmw'
+      - 'c 189:* rmw'      
+    environment:
+      - DISPLAY=:1
+      - TZ=Turkey
+    tty: true

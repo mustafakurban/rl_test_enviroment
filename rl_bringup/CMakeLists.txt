@@ -15,6 +15,15 @@ install(DIRECTORY launch worlds
   DESTINATION share/${PROJECT_NAME}/
 )
 
+# Install Python files
+ament_python_install_package(${PROJECT_NAME})
+
+# Install Python executables
+install(PROGRAMS
+  scripts/train_model.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
