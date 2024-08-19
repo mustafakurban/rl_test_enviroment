@@ -25,7 +25,7 @@ USER mustafa
 RUN mkdir -p /home/mustafa/rl_planner/src
 
 # Clone the given repository to the workspace
-RUN cd /home/mustafa/rl_planner/src && git clone https://github.com/mustafakurban/rl_test_enviroment.git
+RUN cd /home/mustafa/rl_planner/src && git clone --branch=main https://github.com/mustafakurban/rl_test_enviroment.git
 
 # Environment setup
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/mustafa/.bashrc
