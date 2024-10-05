@@ -67,6 +67,114 @@ class TurtleBotMazeEnv(gym.Env):
         # time.sleep(self.running_step)
         info = {}
 
+        self.encoder = [
+            [],  # Left
+            [],  # Right
+            [],  # Forward
+            [],  # Distance 0.1
+            [],  # Distance 0.2
+            [],  # Distance 0.3
+            [],  # Distance 0.4
+            [],  # Distance 0.5
+            [],  # Distance 0.6
+            [],  # Distance 0.7
+            [],  # Distance 0.8
+            [],  # Distance 0.9
+            [],  # Distance 1.0
+            [],  # Distance 1.1
+            [],  # Distance 1.2
+            [],  # Distance 1.3
+            [],  # Distance 1.4
+            [],  # Distance 1.5
+            [],  # Distance 1.6
+            [],  # Distance 1.7
+            [],  # Distance 1.8
+            [],  # Distance 1.9
+            [],  # Distance 2.0
+            [],  # Distance 2.1
+            [],  # Distance 2.2
+            [],  # Distance 2.3
+            [],  # Distance 2.4
+            [],  # Distance 2.5
+            [],  # Distance 2.6
+            [],  # Distance 2.7
+            [],  # Distance 2.8
+            [],  # Distance 2.9
+            [],  # Distance 3.0
+            [],  # Distance 3.1
+            [],  # Distance 3.2
+            [],  # Distance 3.3
+            [],  # Distance 3.4
+            [],  # Distance 3.5
+            [],  # Distance 3.6
+            [],  # Distance 3.7
+            [],  # Distance 3.8
+            [],  # Distance 3.9
+            [],  # Distance 4.0
+            [],  # Distance 4.1
+            [],  # Distance 4.2
+            [],  # Distance 4.3
+            [],  # Distance 4.4
+            [],  # Distance 4.5
+            [],  # Distance 4.6
+            [],  # Distance 4.7
+            [],  # Distance 4.8
+            [],  # Distance 4.9
+            [],  # Distance 5.0
+            [],  # Distance 5.1
+            [],  # Distance 5.2
+            [],  # Distance 5.3
+            [],  # Distance 5.4
+            [],  # Distance 5.5
+            [],  # Distance 5.6
+            [],  # Distance 5.7
+            [],  # Distance 5.8
+            [],  # Distance 5.9
+            [],  # Distance 6.0
+            [],  # Distance 6.1
+            [],  # Distance 6.2
+            [],  # Distance 6.3
+            [],  # Distance 6.4
+            [],  # Distance 6.5
+            [],  # Distance 6.6
+            [],  # Distance 6.7
+            [],  # Distance 6.8
+            [],  # Distance 6.9
+            [],  # Distance 7.0
+            [],  # Distance 7.1
+            [],  # Distance 7.2
+            [],  # Distance 7.3
+            [],  # Distance 7.4
+            [],  # Distance 7.5
+            [],  # Distance 7.6
+            [],  # Distance 7.7
+            [],  # Distance 7.8
+            [],  # Distance 7.9
+            [],  # Distance 8.0
+            [],  # Distance 8.1
+            [],  # Distance 8.2
+            [],  # Distance 8.3
+            [],  # Distance 8.4
+            [],  # Distance 8.5
+            [],  # Distance 8.6
+            [],  # Distance 8.7
+            [],  # Distance 8.8
+            [],  # Distance 8.9
+            [],  # Distance 9.0
+            [],  # Distance 9.1
+            [],  # Distance 9.2
+            [],  # Distance 9.3
+            [],  # Distance 9.4
+            [],  # Distance 9.5
+            [],  # Distance 9.6
+            [],  # Distance 9.7
+            [],  # Distance 9.8
+            [],  # Distance 9.9
+            [],  # Collision
+            []   # Reward
+        ]
+
+
         print("Resetting Simulation Done")
         return state,info
 
@@ -95,19 +203,45 @@ class TurtleBotMazeEnv(gym.Env):
         state = self.robot_node_.get_observation()
         self.position = self.robot_node_.odom.pose.pose
         scan_data = self.robot_node_.scan_data
-        self.step_ += 1
-        distance = np.linalg.norm(np.array([self.position.position.x, self.position.position.y]) - 
-        np.array([self.desired_pose.position.x, self.desired_pose.position.y]))
-      
+        self.step_ += 2
+        distance = np.linalg.norm(np.array([self.position.position.x, self.position.position.y]) -
+                                  np.array([self.desired_pose.position.x, self.desired_pose.position.y]))
 
         # Check for collision
         if min(scan_data.ranges) < 0.2:
             self.done = True
-            reward = -100
+            reward = -1
         else:
             self.done = False
-            reward = 100 - distance
-        print("Step: ",self.step_)
-        print("Distance: ",distance)
-        print("Reward: ",reward)
-        return state, reward ,self.done, False,{}
+            reward = 1
+
+        # --------------------------------------------------------------------------
+        # Encoder design
+        # Update encoder based on the action and observations
+
+        # Fill all lists first index to zero
+        for i in self.encoder:
+            i.append(0)
+            i.append(0)
+
+        if action == 0:  # Turn left
+            self.encoder[0][self.step_] = 1  # Left
+        elif action == 1:  # Turn right
+            self.encoder[1][self.step_] = 1  # Right
+        elif action == 2:  # Move forward
+            self.encoder[2][self.step_] = 1  # Forward
+
+        # Update distance encoder
+        distance_index = min(int(distance * 10), 99)  # Ensure the index is within range (0-99)
+        if len(self.encoder[3 + distance_index]) == 0:
+            self.encoder[3 + distance_index][self.step_+1] = 1
+
+        # Update collision and reward encoders
+        self.encoder[-2][self.step_+1] = (1 if self.done else 0)  # Collision
+        self.encoder[-1][self.step_+1] = reward  # Reward
+        # --------------------------------------------------------------------------
+
+        print("Step: ", self.step_)
+        print("Distance: ", distance)
+        print("Reward: ", reward)
+        return state, reward, self.done, False, {}
