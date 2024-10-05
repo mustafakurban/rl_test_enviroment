@@ -203,7 +203,6 @@ class TurtleBotMazeEnv(gym.Env):
         state = self.robot_node_.get_observation()
         self.position = self.robot_node_.odom.pose.pose
         scan_data = self.robot_node_.scan_data
-        self.step_ += 2
         distance = np.linalg.norm(np.array([self.position.position.x, self.position.position.y]) -
                                   np.array([self.desired_pose.position.x, self.desired_pose.position.y]))
 
@@ -244,4 +243,6 @@ class TurtleBotMazeEnv(gym.Env):
         print("Step: ", self.step_)
         print("Distance: ", distance)
         print("Reward: ", reward)
+        self.step_ += 2
+
         return state, reward, self.done, False, {}
