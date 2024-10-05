@@ -209,10 +209,10 @@ class TurtleBotMazeEnv(gym.Env):
         # Check for collision
         if min(scan_data.ranges) < 0.2:
             self.done = True
-            reward = -1
+            reward = -1.0
         else:
             self.done = False
-            reward = 1
+            reward = 1.0
 
         # --------------------------------------------------------------------------
         # Encoder design
