@@ -39,33 +39,6 @@ class TurtleBotMazeEnv(gym.Env):
         self.reward = 0.0
         self.reward_range = (-np.inf, np.inf)
         self.robot_node_ = RobotNode()
-        self._seed()
-
-    # A function to initialize the random generator
-    def _seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
-        
-    # Resets the state of the environment and returns an initial observation.
-    def reset(self,seed=None,options=None):
-
-        super().reset(seed=seed)
-        print("Resetting Simulation")
-
-        #create rando positin range low = 0.1 high = 
-        self.desired_pose.position.x = 5.0
-        self.desired_pose.position.y = 5.0
-        print("Desired Pose: ",self.desired_pose)
-
-        self.robot_node_.reset_simulation()
-
-        self.done = False
-        rclpy.spin_once(self.robot_node_, timeout_sec=1)
-
-        state = self.robot_node_.get_observation()
-
-        # time.sleep(self.running_step)
-        info = {}
 
         self.encoder = [
             [],  # Left
@@ -173,7 +146,33 @@ class TurtleBotMazeEnv(gym.Env):
             [],  # Collision
             []   # Reward
         ]
+        self._seed()
 
+    # A function to initialize the random generator
+    def _seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
+        
+    # Resets the state of the environment and returns an initial observation.
+    def reset(self,seed=None,options=None):
+
+        super().reset(seed=seed)
+        print("Resetting Simulation")
+
+        #create rando positin range low = 0.1 high = 
+        self.desired_pose.position.x = 5.0
+        self.desired_pose.position.y = 5.0
+        print("Desired Pose: ",self.desired_pose)
+
+        self.robot_node_.reset_simulation()
+
+        self.done = False
+        rclpy.spin_once(self.robot_node_, timeout_sec=1)
+
+        state = self.robot_node_.get_observation()
+
+        # time.sleep(self.running_step)
+        info = {}
 
         print("Resetting Simulation Done")
         return state,info
