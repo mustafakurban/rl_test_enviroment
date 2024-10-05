@@ -40,6 +40,8 @@ class TurtleBotMazeEnv(gym.Env):
         self.reward_range = (-np.inf, np.inf)
         self.robot_node_ = RobotNode()
 
+        self.txt_file = open("data.txt", "w")
+
         self.encoder = [
             [],  # Left
             [],  # Right
@@ -239,9 +241,11 @@ class TurtleBotMazeEnv(gym.Env):
         self.encoder[-1][self.step_+1] = reward  # Reward
         # --------------------------------------------------------------------------
 
-        print("Step: ", self.step_)
-        print("Distance: ", distance)
-        print("Reward: ", reward)
+        # print("Step: ", self.step_)
+        # print("Distance: ", distance)
+        # print("Reward: ", reward)
+        print(self.encoder)
         self.step_ += 2
+
 
         return state, reward, self.done, False, {}
